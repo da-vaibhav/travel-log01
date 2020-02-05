@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.entryForm label, .entryForm input, .entryForm textarea {
+  margin: 0.5rem 0;
+  display: block;
+}

@@ -3,10 +3,12 @@ import ReactMapGL, { Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { listLogEntries } from './API';
 import MarkerIcon from './marker';
+import LogEntryForm from './LogEntryForm';
 
 function App() {
   const [logEntries, setlogEntries] = useState([]);
   const [ShowPopup, setShowPopup] = useState({});
+  const [addEntryLocation, setAddEntryLocation] = useState(null);
   const [viewport, setViewport] = useState({
     width: '100vw',
     height: '100vh',
@@ -23,12 +25,20 @@ function App() {
     })();
   }, []);
 
+  const showAddMarkerPopup = (event) => {
+    console.log(event);
+    const [longitude, latitude] = event.lngLat;
+    console.log(longitude, latitude);
+    setAddEntryLocation({longitude, latitude});
+  };
+
   return (
     <ReactMapGL
       {...viewport}
       mapStyle={"mapbox://styles/vaibhavgc/ck67qh2mz0me81inlsiwllreu"}
       mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
       onViewportChange={setViewport}
+      onDblClick={showAddMarkerPopup}
     >
       {logEntries.map(entry => (
         <React.Fragment key={entry._id}>
@@ -60,7 +70,25 @@ function App() {
           : null }
         </React.Fragment>
       ))}
-
+      {addEntryLocation
+        ? (<React.Fragment>
+            <Marker latitude={addEntryLocation.latitude} longitude={addEntryLocation.longitude} offsetLeft={-20} offsetTop={-10}>
+              <MarkerIcon />
+            </Marker>
+            <Popup
+              latitude={addEntryLocation.latitude}
+              dynamicPosition={true}
+              longitude={addEntryLocation.longitude}
+              closeButton={true}
+              closeOnClick={false}
+              onClose={() => setAddEntryLocation(null)}
+              anchor="top">
+              <div>
+                <LogEntryForm />
+              </div>
+            </Popup>
+          </React.Fragment>)
+        : null}
     </ReactMapGL>
   );
 }
