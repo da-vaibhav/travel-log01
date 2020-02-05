@@ -6,7 +6,7 @@ import MarkerIcon from './marker';
 import LogEntryForm from './LogEntryForm';
 
 function App() {
-  const [logEntries, setlogEntries] = useState([]);
+  const [logEntries, setLogEntries] = useState([]);
   const [ShowPopup, setShowPopup] = useState({});
   const [addEntryLocation, setAddEntryLocation] = useState(null);
   const [viewport, setViewport] = useState({
@@ -17,12 +17,14 @@ function App() {
     zoom: 8
   });
 
+  const getEntries = async () => {
+    const logEntries = await listLogEntries();
+    setLogEntries(logEntries);
+  };
+
+
   useEffect(() => {
-    (async () => {
-      const logEntries  = await listLogEntries();
-      console.log(logEntries);
-      setlogEntries(logEntries);
-    })();
+    getEntries();
   }, []);
 
   const showAddMarkerPopup = (event) => {
@@ -84,7 +86,7 @@ function App() {
               onClose={() => setAddEntryLocation(null)}
               anchor="top">
               <div>
-                <LogEntryForm />
+                <LogEntryForm onClose={() => setAddEntryLocation(null)} location={addEntryLocation}/>
               </div>
             </Popup>
           </React.Fragment>)
